@@ -46,83 +46,27 @@ class HistoricalStats(db.Model):
     fill_duration_hours = db.Column(db.Float)  # Time taken to fill the bin
 
 # Routes
+# Add this near the top of the file, after the db initialization
+current_stats = {'fill_level': 0}  # Global variable to store current fill level
+
 @app.route('/api/current-stats', methods=['GET', 'POST'])
-def handle_current_stats():
-    """Get or update current fill level and waste type breakdown"""
+def handle_stats():
     if request.method == 'POST':
-        try:
-            data = request.json
-            timestamp = datetime.now(timezone.utc)
-            current_temp = float(data.get('temperature', 0))
-            
-            # Get current settings for thresholds
-            settings = Settings.query.first()
-            if settings:
-                # Check temperature threshold
-                if current_temp > settings.threshold_temperature:
-                    alert = Alert(
-                        message=f"High temperature detected: {current_temp}°F",
-                        location="Main Bin",
-                        is_read=False
-                    )
-                    db.session.add(alert)
-                
-                # Calculate total fill level and check capacity threshold
-                total_fill = sum(float(data.get(type, 0)) for type in ['recyclable', 'organic', 'non_recyclable'])
-                if total_fill > settings.threshold_capacity:
-                    alert = Alert(
-                        message=f"Bin capacity exceeded: {total_fill}%",
-                        location="Main Bin",
-                        is_read=False
-                    )
-                    db.session.add(alert)
-            
-            # Create new measurements for each waste type
-            for waste_type in ['recyclable', 'organic', 'non_recyclable']:
-                if waste_type in data:
-                    measurement = WasteMeasurement(
-                        timestamp=timestamp,
-                        fill_level=float(data[waste_type]),
-                        waste_type=waste_type.replace('_', '-'),
-                        temperature=current_temp
-                    )
-                    db.session.add(measurement)
-            
-            db.session.commit()
-            return jsonify({'message': 'Measurements updated successfully'})
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
-    else:
-        try:
-            # Get the latest measurements for each waste type
-            latest_measurements = {}
-            current_temp = 0
-            
-            for waste_type in ['recyclable', 'organic', 'non-recyclable']:
-                measurement = WasteMeasurement.query.filter_by(waste_type=waste_type)\
-                    .order_by(WasteMeasurement.timestamp.desc()).first()
-                if measurement:
-                    latest_measurements[waste_type] = measurement.fill_level
-                    current_temp = measurement.temperature
-
-            # Calculate total and percentages
-            total = sum(latest_measurements.values()) if latest_measurements else 0
-            breakdown = {
-                waste_type: (level / total * 100 if total > 0 else 0)
-                for waste_type, level in latest_measurements.items()
-            }
-
-            return jsonify({
-                'current': {
-                    'recyclable': round(breakdown.get('recyclable', 0), 1),
-                    'organic': round(breakdown.get('organic', 0), 1),
-                    'nonRecyclable': round(breakdown.get('non-recyclable', 0), 1)
-                },
-                'fillLevel': round(total, 1) if total <= 100 else 100,
-                'temperature': round(current_temp, 1)
-            })
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
+        data = request.get_json()
+        fill_level = data.get('fill_level', 0)
+        current_stats['fill_level'] = fill_level
+        
+        # Store in database
+        measurement = WasteMeasurement(
+            fill_level=fill_level,
+            waste_type='non-recyclable'  # Since we're only tracking fill level now
+        )
+        db.session.add(measurement)
+        db.session.commit()
+        
+        return jsonify({"status": "success", "fill_level": fill_level})
+    else:  # GET request
+        return jsonify({"fill_level": current_stats.get('fill_level', 0)})
 
 @app.route('/api/alerts', methods=['GET', 'POST'])
 def handle_alerts():

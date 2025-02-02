@@ -1,28 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Dashboard.css';
-import { fetchCurrentStats, resetBin, fetchHistoricalStats, fetchAlerts } from '../utils/api';
+import { fetchCurrentStats, resetBin, fetchAlerts } from '../utils/api';
 import toast, { Toaster } from 'react-hot-toast';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
-    fillLevel: 0,
-    current: {
-      recyclable: 0,
-      organic: 0,
-      nonRecyclable: 0
-    },
-    temperature: 0
-  });
-  const [historicalStats, setHistoricalStats] = useState({
-    history: [],
-    averages: {
-      recyclable: 0,
-      organic: 0,
-      nonRecyclable: 0,
-      efficiency: 0,
-      maxTemperature: 0,
-      fillDuration: 0
-    }
+    fill_level: 0
   });
   const [alerts, setAlerts] = useState([]);
   const previousAlerts = useRef([]);
@@ -38,28 +21,14 @@ const Dashboard = () => {
     };
 
     fetchStats();
-    // Fetch every 30 seconds
     const interval = setInterval(fetchStats, 30000);
     return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const loadHistoricalStats = async () => {
-      try {
-        const data = await fetchHistoricalStats();
-        setHistoricalStats(data);
-      } catch (error) {
-        console.error('Error fetching historical stats:', error);
-      }
-    };
-    loadHistoricalStats();
   }, []);
 
   useEffect(() => {
     const fetchAlertData = async () => {
       try {
         const data = await fetchAlerts();
-        // Check for new alerts by comparing with previous alerts
         if (previousAlerts.current.length > 0) {
           const newAlerts = data.filter(
             alert => !previousAlerts.current.find(
@@ -67,7 +36,6 @@ const Dashboard = () => {
             )
           );
           
-          // Show toast for each new alert
           newAlerts.forEach(alert => {
             toast(
               <div className="alert-toast">
@@ -100,16 +68,11 @@ const Dashboard = () => {
   }, []);
 
   const handleReset = async () => {
-    if (window.confirm('Are you sure you want to reset the bin? This will archive current stats.')) {
+    if (window.confirm('Are you sure you want to reset the bin?')) {
       try {
         await resetBin();
-        // Refresh both current and historical stats
-        const [currentData, historicalData] = await Promise.all([
-          fetchCurrentStats(),
-          fetchHistoricalStats()
-        ]);
+        const currentData = await fetchCurrentStats();
         setStats(currentData);
-        setHistoricalStats(historicalData);
         toast.success('Bin reset successfully!', {
           duration: 3000,
           icon: '🔄'
@@ -137,7 +100,7 @@ const Dashboard = () => {
         }}
       />
       <div className="dashboard-header">
-        <h2>Waste Management Dashboard</h2>
+        <h2>Smart Bin Dashboard</h2>
         <div className="dashboard-actions">
           <button className="reset-btn" onClick={handleReset}>Reset Bin</button>
         </div>
@@ -145,23 +108,7 @@ const Dashboard = () => {
       <div className="dashboard-grid">
         <div className="dashboard-card">
           <h3>Current Fill Level</h3>
-          <div className="fill-level">{stats.fillLevel}%</div>
-        </div>
-        <div className="dashboard-card">
-          <h3>Current Temperature</h3>
-          <div className="temperature">
-            <span className={`temp-value ${stats.temperature > 100 ? 'high-temp' : ''}`}>
-              {stats.temperature}°F
-            </span>
-          </div>
-        </div>
-        <div className="dashboard-card">
-          <h3>Waste Classification</h3>
-          <div className="waste-types">
-            <div>Recyclable: {stats.current.recyclable}%</div>
-            <div>Organic: {stats.current.organic}%</div>
-            <div>Non-recyclable: {stats.current.nonRecyclable}%</div>
-          </div>
+          <div className="fill-level">{stats.fill_level}%</div>
         </div>
         <div className="dashboard-card">
           <h3>Recent Alerts</h3>
@@ -178,29 +125,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-
-      <h2>Historical Statistics</h2>
-      <div className="dashboard-grid">
-        <div className="dashboard-card">
-          <h3>Average Composition</h3>
-          <div className="waste-types">
-            <div>Recyclable: {historicalStats.averages.recyclable}%</div>
-            <div>Organic: {historicalStats.averages.organic}%</div>
-            <div>Non-recyclable: {historicalStats.averages.nonRecyclable}%</div>
-          </div>
-        </div>
-
-        <div className="dashboard-card">
-          <h3>Performance Metrics</h3>
-          <div className="metrics">
-            <div>Average Efficiency: {historicalStats.averages.efficiency}%</div>
-            <div>Average Max Temperature: {historicalStats.averages.maxTemperature}°F</div>
-            <div>Average Fill Duration: {historicalStats.averages.fillDuration.toFixed(1)} hours</div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

@@ -10,11 +10,10 @@ const Settings = () => {
       sms: false
     },
     thresholds: {
-      capacity: 80,
-      temperature: 85  // Default Fahrenheit value
+      capacity: 80
     }
   });
-  const [saveStatus, setSaveStatus] = useState(''); // For showing save status
+  const [saveStatus, setSaveStatus] = useState('');
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -39,12 +38,12 @@ const Settings = () => {
     }));
   };
 
-  const handleThresholdChange = (type, value) => {
+  const handleThresholdChange = (value) => {
     setSettings(prev => ({
       ...prev,
       thresholds: {
         ...prev.thresholds,
-        [type]: value
+        capacity: value
       }
     }));
   };
@@ -54,7 +53,7 @@ const Settings = () => {
       setSaveStatus('Saving...');
       await saveSettings(settings);
       setSaveStatus('Settings saved successfully!');
-      setTimeout(() => setSaveStatus(''), 3000); // Clear message after 3 seconds
+      setTimeout(() => setSaveStatus(''), 3000);
     } catch (error) {
       console.error('Error saving settings:', error);
       setSaveStatus('Error saving settings');
@@ -62,23 +61,9 @@ const Settings = () => {
     }
   };
 
-  const handleReset = async () => {
-    try {
-      const data = await fetchSettings();
-      setSettings(data);
-      setSaveStatus('Settings reset to defaults');
-      setTimeout(() => setSaveStatus(''), 3000);
-    } catch (error) {
-      console.error('Error resetting settings:', error);
-      setSaveStatus('Error resetting settings');
-      setTimeout(() => setSaveStatus(''), 3000);
-    }
-  };
-
   return (
     <div className="settings-container">
       <h2>System Settings</h2>
-
       <div className="settings-grid">
         <div className="settings-card">
           <h3>Notifications</h3>
@@ -119,27 +104,15 @@ const Settings = () => {
           <h3>Alert Thresholds</h3>
           <div className="settings-options">
             <div className="threshold-setting">
-              <label>Capacity Alert Threshold (%)</label>
+              <label>Fill Level Alert Threshold (%)</label>
               <input
                 type="range"
                 min="50"
                 max="95"
                 value={settings.thresholds.capacity}
-                onChange={(e) => handleThresholdChange('capacity', e.target.value)}
+                onChange={(e) => handleThresholdChange(e.target.value)}
               />
               <span>{settings.thresholds.capacity}%</span>
-            </div>
-
-            <div className="threshold-setting">
-              <label>Temperature Alert Threshold (°F)</label>
-              <input
-                type="range"
-                min="68"
-                max="120"
-                value={settings.thresholds.temperature}
-                onChange={(e) => handleThresholdChange('temperature', e.target.value)}
-              />
-              <span>{settings.thresholds.temperature}°F</span>
             </div>
           </div>
         </div>
@@ -147,11 +120,10 @@ const Settings = () => {
 
       <div className="settings-actions">
         <button className="save-btn" onClick={handleSave}>Save Changes</button>
-        <button className="reset-btn" onClick={handleReset}>Reset to Defaults</button>
         {saveStatus && <div className="save-status">{saveStatus}</div>}
       </div>
     </div>
   );
 };
 
-export default Settings; 
+export default Settings;

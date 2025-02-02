@@ -3,5 +3,7 @@
     "idf.openOcdConfigs": [
         "board/esp32s3-builtin.cfg"
     ],
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "idf.espIdfPath": "/Users/pranavshukla/esp/v5.4/esp-idf",
+    "idf.toolsPath": "/Users/pranavshukla/.espressif"
 }
