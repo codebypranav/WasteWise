@@ -1,0 +1,7 @@
+{
+    "idf.port": "/dev/tty.usbmodem1412301",
+    "idf.openOcdConfigs": [
+        "board/esp32s3-builtin.cfg"
+    ],
+    "cmake.ignoreCMakeListsMissing": true
+}
