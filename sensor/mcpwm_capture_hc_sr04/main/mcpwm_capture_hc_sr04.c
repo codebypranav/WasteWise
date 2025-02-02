@@ -29,18 +29,35 @@ const static char *TAG = "example";
 
 static esp_err_t send_measurement(float fill_level) {
     char post_data[100];
-    char json_data[80];
     
-    // First create the JSON string
-    snprintf(json_data, sizeof(json_data), 
-             "{\"non_recyclable\": %.2f, \"recyclable\": 0, \"organic\": 0, \"temperature\": 25.0}", 
+    // Send only the data string without logging
+    snprintf(post_data, sizeof(post_data), 
+             "DATA:{\"fill_level\":%.2f}\n", 
              fill_level);
     
-    // Then add the DATA prefix
-    snprintf(post_data, sizeof(post_data), "DATA:%s\n", json_data);
+    size_t written = 0;
+    const size_t total_len = strlen(post_data);
     
-    esp_err_t ret = usb_serial_jtag_write_bytes((const uint8_t*)post_data, strlen(post_data), portMAX_DELAY);
-    return ret;
+    // Try writing multiple times if needed
+    while (written < total_len) {
+        int bytes_written = usb_serial_jtag_write_bytes(
+            (const uint8_t*)post_data + written,
+            total_len - written,
+            pdMS_TO_TICKS(100)
+        );
+        
+        if (bytes_written < 0) {
+            ESP_LOGE(TAG, "USB write error: %d", bytes_written);
+            return ESP_FAIL;
+        }
+        
+        written += bytes_written;
+        if (bytes_written == 0) {
+            vTaskDelay(pdMS_TO_TICKS(10));
+        }
+    }
+    
+    return ESP_OK;
 }
 
 static bool hc_sr04_echo_callback(mcpwm_cap_channel_handle_t cap_chan, const mcpwm_capture_event_data_t *edata, void *user_data)
