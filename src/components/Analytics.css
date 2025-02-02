@@ -1,0 +1,122 @@
+.analytics {
+  padding: 2rem;
+}
+
+.analytics h2 {
+  color: var(--forest-green-dark);
+  margin-bottom: 2rem;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.analytics-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-card h3 {
+  color: var(--forest-green);
+  margin-bottom: 1.5rem;
+}
+
+.efficiency-score {
+  text-align: center;
+}
+
+.score-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  background: conic-gradient(
+    var(--forest-green) var(--score),
+    #e0e0e0 var(--score)
+  );
+}
+
+.waste-breakdown {
+  margin-top: 1rem;
+}
+
+.breakdown-bar {
+  height: 30px;
+  display: flex;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.bar-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.bar-segment.recyclable {
+  background-color: var(--forest-green);
+}
+
+.bar-segment.organic {
+  background-color: var(--wood-brown);
+}
+
+.bar-segment.non-recyclable {
+  background-color: #cc7777;
+}
+
+.breakdown-legend {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.legend-color.recyclable {
+  background-color: var(--forest-green);
+}
+
+.legend-color.organic {
+  background-color: var(--wood-brown);
+}
+
+.legend-color.non-recyclable {
+  background-color: #cc7777;
+}
+
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+}
+
+.suggestions-list li {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--background-light);
+  border-radius: 6px;
+  color: var(--forest-green-dark);
+} 
