@@ -83,7 +83,7 @@ def handle_current_stats():
                     measurement = WasteMeasurement(
                         timestamp=timestamp,
                         fill_level=float(data[waste_type]),
-                        waste_type=waste_type,
+                        waste_type=waste_type.replace('_', '-'),
                         temperature=current_temp
                     )
                     db.session.add(measurement)
@@ -103,7 +103,7 @@ def handle_current_stats():
                     .order_by(WasteMeasurement.timestamp.desc()).first()
                 if measurement:
                     latest_measurements[waste_type] = measurement.fill_level
-                    current_temp = measurement.temperature  # Get the latest temperature
+                    current_temp = measurement.temperature
 
             # Calculate total and percentages
             total = sum(latest_measurements.values()) if latest_measurements else 0
