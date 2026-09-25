@@ -142,7 +142,6 @@ The model script uses:
 
 This makes the project more than a simple data dashboard: it acts as a prototype for AI-enabled environmental monitoring and predictive maintenance.
 
-## Why this project is technically interesting
 
 WasteWise AI demonstrates how to combine multiple layers of a real system:
 
