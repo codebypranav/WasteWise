@@ -1,70 +1,91 @@
-# Getting Started with Create React App
+# WasteWise AI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+WasteWise AI is a smart waste management dashboard designed to monitor bin fill levels, detect overflow risk, and help optimize waste collection schedules using sensor-like data and AI-informed monitoring.
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+The project includes:
+- a Flask backend with SQLite persistence
+- a React frontend dashboard
+- real-time/near-real-time waste statistics
+- alert management for overflow conditions
+- historical analytics and threshold settings
 
-### `npm start`
+## Tech stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Frontend: React, Create React App
+- Backend: Python, Flask, SQLAlchemy
+- Database: SQLite
+- API layer: RESTful endpoints for stats, alerts, settings, and historical analysis
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Project structure
 
-### `npm test`
+```text
+backend/
+  app.py
+  requirements.txt
+  seed_data.py
+  test_alerts.py
+  test_data.py
+src/
+  App.js
+  components/
+  utils/
+public/
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Backend setup
 
-### `npm run build`
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python app.py
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The backend runs on:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```text
+http://localhost:5000
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Frontend setup
 
-### `npm run eject`
+From the project root:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+npm install
+npm start
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The app will be available at:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```text
+http://localhost:3000
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Features
 
-## Learn More
+- current bin fill level monitoring
+- alert generation and dismissal
+- storage threshold configuration
+- historical analytics with averages and trends
+- reset workflow to archive the current collection cycle
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## API highlights
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Common endpoints include:
 
-### Code Splitting
+- `GET /api/current-stats`
+- `POST /api/current-stats`
+- `GET /api/alerts`
+- `POST /api/alerts`
+- `GET /api/settings`
+- `POST /api/settings`
+- `GET /api/historical-stats`
+- `POST /api/reset-bin`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Notes
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is intended as a prototype for waste monitoring and optimization, demonstrating how sensor data and analytics can support smarter collection planning.
